@@ -9,25 +9,21 @@ const Modal = {
 
 const transactions = [
     {
-        id: 1,
         description: 'Luz',
         amount: -15000,
         date: '23/01/2022'
     },
     {
-        id: 2,
         description: 'Internet',
         amount: -10000,
         date: '15/01/2022'
     },
     {
-        id: 3,
         description: 'Website',
         amount: 100000,
         date: '15/01/2022'
     },
     {
-        id: 4,
         description: 'Salário',
         amount: 125000,
         date: '15/01/2022'
@@ -35,10 +31,22 @@ const transactions = [
 ]
 
 const Transaction = {
+    all: transactions,
+
+    add(transaction){
+        Transaction.all.push(transaction)
+
+        App.reload()
+    },
+    remove(index){
+        Transaction.all.splice(index, 1)
+
+        App.reload()
+    },
     incomes(){
         let income = 0
 
-        transactions.forEach(transaction => {
+        Transaction.all.forEach(transaction => {
             if(transaction.amount > 0){
                 income += transaction.amount
             }
@@ -49,7 +57,7 @@ const Transaction = {
     expenses(){
         let expense = 0
 
-        transactions.forEach( transaction => {
+        Transaction.all.forEach( transaction => {
             if(transaction.amount < 0){
                 expense += transaction.amount
             }
@@ -90,6 +98,9 @@ const DOM = {
         document.querySelector('#incomeDisplay').innerHTML = Utils.formatCurrency(Transaction.incomes())
         document.querySelector('#expenseDisplay').innerHTML = Utils.formatCurrency(Transaction.expenses())
         document.querySelector('#totalDisplay').innerHTML = Utils.formatCurrency(Transaction.total())
+    },
+    clearTransactions(){
+        DOM.transactionsContainer.innerHTML = ''
     }
 }
 
@@ -110,9 +121,24 @@ const Utils = {
     }
 }
 
+const Form = {
+    
+}
 
-transactions.forEach(function(transaction){
-    DOM.addTransaction(transaction)
-})
+const App = {
+    init(){
+        Transaction.all.forEach(transaction => {
+            DOM.addTransaction(transaction)
+        })
 
-DOM.updateBalance()
+        DOM.updateBalance()
+    },
+
+    reload(){
+        DOM.clearTransactions()
+        App.init()
+        
+    }
+}
+
+App.init()
