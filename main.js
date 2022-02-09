@@ -105,6 +105,16 @@ const DOM = {
 }
 
 const Utils = {
+    formatAmount(value){
+        value = Number(value) * 100
+        
+        return value
+    },
+    formatDate(date){
+        const splittedDate = date.split('-')
+        
+        return `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`
+    },
     formatCurrency(value){
         const signal = Number(value) < 0 ? "-" : ""
 
@@ -122,7 +132,62 @@ const Utils = {
 }
 
 const Form = {
-    
+    description: document.querySelector('#description'),
+    amount: document.querySelector('#amount'),
+    date: document.querySelector('#date'),
+
+    getValues(){
+        return{
+            description: Form.description.value,
+            amount: Form.amount.value,
+            date: Form.date.value
+        }
+    },
+    formatData(){
+        console.log('Dados');
+    },
+    validateFields(){
+        const { description, amount, date } = Form.getValues()
+        
+        if(description.trim() === '' || amount.trim() === '' || date.trim() === ''){
+            throw new Error("Por favor, preencha todos os campos")
+        }
+    },
+    formatValue(){
+        let { description, amount, date } = Form.getValues()
+        amount = Utils.formatAmount(amount)
+
+        date = Utils.formatDate(date)
+
+        return{
+            description,
+            amount,
+            date
+        }
+    },
+    saveTransaction(transaction){
+        Transaction.add(transaction)
+    },
+    ClearFields(){
+        Form.description.value = ''
+        Form.amount.value = ''
+        Form.date.value = ''
+    },
+    submit(event){
+        event.preventDefault()
+
+        try {
+            Form.validateFields()
+            const transaction = Form.formatValue()
+            Form.saveTransaction(transaction)
+            Form.ClearFields()
+            Modal.close()
+        } catch (error) {
+            alert(error.message)
+        }
+
+        
+    }
 }
 
 const App = {
