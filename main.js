@@ -25,18 +25,40 @@ const transactions = [
         description: 'Website',
         amount: 100000,
         date: '15/01/2022'
+    },
+    {
+        id: 4,
+        description: 'Salário',
+        amount: 125000,
+        date: '15/01/2022'
     }
 ]
 
 const Transaction = {
     incomes(){
-    
+        let income = 0
+
+        transactions.forEach(transaction => {
+            if(transaction.amount > 0){
+                income += transaction.amount
+            }
+        })
+
+        return income
     },
     expenses(){
+        let expense = 0
 
+        transactions.forEach( transaction => {
+            if(transaction.amount < 0){
+                expense += transaction.amount
+            }
+        })
+
+        return expense
     },
     total(){
-
+        return Transaction.incomes() + Transaction.expenses()
     }
 }
 
@@ -62,6 +84,12 @@ const DOM = {
         `
 
         return html
+    },
+
+    updateBalance(){
+        document.querySelector('#incomeDisplay').innerHTML = Utils.formatCurrency(Transaction.incomes())
+        document.querySelector('#expenseDisplay').innerHTML = Utils.formatCurrency(Transaction.expenses())
+        document.querySelector('#totalDisplay').innerHTML = Utils.formatCurrency(Transaction.total())
     }
 }
 
@@ -82,6 +110,9 @@ const Utils = {
     }
 }
 
+
 transactions.forEach(function(transaction){
     DOM.addTransaction(transaction)
 })
+
+DOM.updateBalance()
